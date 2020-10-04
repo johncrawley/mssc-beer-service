@@ -10,39 +10,39 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jacstuff.msscbeerservice.services.BeerService;
 import com.jacstuff.msscbeerservice.web.model.BeerDto;
+import com.jacstuff.msscbeerservice.web.model.BeerStyle;
 
 @WebMvcTest(BeerController.class)
 public class BeerControllerTest {
-
-	public BeerControllerTest() {
-		// TODO Auto-generated constructor stub
-	}
 	
 	@Autowired MockMvc mockMvc;
 	@Autowired ObjectMapper objectMapper;
+	@MockBean BeerService beerService;
 	
 	@Test
 	void getBeerById() throws Exception{
 		mockMvc.perform(
-				get("/api/v1/beer" + UUID.randomUUID().toString())
+				get("/api/v1/beer/" + UUID.randomUUID().toString())
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}
 	
 	@Test
 	void saveNewBeer() throws Exception {
-		BeerDto beerDto = BeerDto.builder().build();
+		BeerDto beerDto = BeerDto.builder().beerName("Genuine Class").beerStyle(BeerStyle.PORTER).build();
 		String beerDtoJson = objectMapper.writeValueAsString(beerDto);
 		
 		mockMvc.perform(post("/api/v1/beer")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(beerDtoJson))
-				.andExpect(status().isCreated());
+				.andExpect(status().isCreated());//.andExpect(header().string("Location", "/api/v1/beer/1"));
 	}
 	
 	@Test
@@ -51,7 +51,7 @@ public class BeerControllerTest {
 		BeerDto beerDto = BeerDto.builder().build();
 		String beerDtoJson = objectMapper.writeValueAsString(beerDto);
 		
-		mockMvc.perform(put("/api/vi/beer/" + UUID.randomUUID().toString())
+		mockMvc.perform(put("/api/v1/beer/" + UUID.randomUUID().toString())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(beerDtoJson))
 				.andExpect(status().isNoContent());
