@@ -5,16 +5,17 @@ import java.util.UUID;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jacstuff.msscbeerservice.services.BeerService;
-import com.jacstuff.msscbeerservice.services.BeerServiceImpl;
 import com.jacstuff.msscbeerservice.web.model.BeerDto;
 
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,9 @@ public class BeerController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
-	
-	
+	@DeleteMapping({"/{beerId}"})
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteBeer(@PathVariable("beerId") UUID beerId) {
+		beerService.deleteById(beerId);
+	}
 }
