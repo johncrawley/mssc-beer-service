@@ -2,6 +2,8 @@ package com.jacstuff.msscbeerservice.web.controller;
 
 import java.util.UUID;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +35,7 @@ public class BeerController {
 	}
 
 	@PostMapping()
-	public ResponseEntity<BeerDto> saveNewBeer(@RequestBody BeerDto beerDto) {	
+	public ResponseEntity<BeerDto> saveNewBeer(@Valid @RequestBody BeerDto beerDto) {	
 		System.out.println("saved beer! "  + beerDto.getBeerName());
 		BeerDto savedDto = beerService.saveBeer(beerDto);
 		HttpHeaders headers = new HttpHeaders();
@@ -45,7 +47,7 @@ public class BeerController {
 
 
 	@PutMapping("/{beerId}")
-	public ResponseEntity<Void> updateBeerById(@PathVariable UUID beerId, @RequestBody BeerDto beerDto) {
+	public ResponseEntity<Void> updateBeerById(@PathVariable UUID beerId, @Valid @RequestBody BeerDto beerDto) {
 		
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

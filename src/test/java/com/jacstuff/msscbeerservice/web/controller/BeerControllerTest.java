@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,6 +26,20 @@ public class BeerControllerTest {
 	@Autowired MockMvc mockMvc;
 	@Autowired ObjectMapper objectMapper;
 	@MockBean BeerService beerService;
+	BeerDto validBeer;
+	
+	@BeforeAll
+	void setup() {
+		validBeer = BeerDto.builder()
+				.id(UUID.randomUUID())
+				.beerName("Goodbeer v3")
+				.beerStyle(BeerStyle.PALE_ALE)
+				.upc(12312331L)
+				.build();
+	}
+	
+	
+	
 	
 	@Test
 	void getBeerById() throws Exception{
@@ -48,7 +63,8 @@ public class BeerControllerTest {
 	@Test
 	void updateBeerById() throws Exception {
 
-		BeerDto beerDto = BeerDto.builder().build();
+		BeerDto beerDto = validBeer;
+		beerDto.setId(null);
 		String beerDtoJson = objectMapper.writeValueAsString(beerDto);
 		
 		mockMvc.perform(put("/api/v1/beer/" + UUID.randomUUID().toString())
@@ -57,4 +73,6 @@ public class BeerControllerTest {
 				.andExpect(status().isNoContent());
 	}
 
+	
+	
 }
