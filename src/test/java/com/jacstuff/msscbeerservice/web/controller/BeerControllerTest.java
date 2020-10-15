@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,7 +28,7 @@ public class BeerControllerTest {
 	@MockBean BeerService beerService;
 	BeerDto validBeer;
 	
-	@BeforeAll
+	@BeforeEach
 	void setup() {
 		validBeer = BeerDto.builder()
 				.id(UUID.randomUUID())
