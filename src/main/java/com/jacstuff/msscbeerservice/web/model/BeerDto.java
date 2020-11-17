@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 import com.sun.istack.NotNull;
 
@@ -26,6 +27,7 @@ public class BeerDto {
 	private UUID id;
 	
 	@NotBlank
+	@Size(min = 3, max = 100)
 	private String beerName;
 	
 	@NotNull
