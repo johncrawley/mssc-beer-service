@@ -4,44 +4,47 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.jacstuff.msscbeerservice.domain.Beer;
+import com.jacstuff.msscbeerservice.repositories.BeerRepository;
+import com.jacstuff.msscbeerservice.web.mappers.BeerMapper;
 import com.jacstuff.msscbeerservice.web.model.BeerDto;
-import com.jacstuff.msscbeerservice.web.model.BeerStyle;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class BeerServiceImpl implements BeerService {
+	
+	private final BeerRepository beerRepository;
+	private final BeerMapper beerMapper;
 
-	public BeerServiceImpl() {
-		// TODO Auto-generated constructor stub
-	}
 
 	@Override
 	public BeerDto getBeerById(UUID beerId) {
-		// TODO Auto-generated method stub
-		return BeerDto.builder().id(beerId)
-				.beerName("rough beer")
-				.beerStyle(BeerStyle.LAGER)
-				.build();
+		
+		return beerMapper.beerToBeerDto( beerRepository.findById(beerId).orElseThrow(NotFoundException::new));
 	}
 
 	@Override
 	public BeerDto saveBeer(BeerDto beerDto) {
-		log.info("BeerServiceImpl Entered saveBeer() beer info: " + beerDto);
-		BeerDto beerDto2 =  BeerDto.builder().id(UUID.randomUUID())
-				.beerName(beerDto.getBeerName())
-				.beerStyle(beerDto.getBeerStyle())
-				.build();
-		System.out.println("BeerServiceImpl saveBeer() beer id: " + beerDto2.getId().toString());
-		return beerDto2;
+		// the beer repository takes in a Beer object, so using the mapper to convert BeerDto to Beer
+		// we return a BeerDto, so using the mapper again to convert the Beer entity returned by repository to BeerDto
+		Beer beer = beerRepository.save(beerMapper.beerDtoToBeer(beerDto));
+		return beerMapper.beerToBeerDto(beer);
 	}
 
 
 	@Override
-	public void updateBeer(UUID beerId, BeerDto beerDto) {
-		//todo: impl
-		
+	public BeerDto updateBeer(UUID beerId, BeerDto beerDto) {
+		Beer beer = beerRepository.findById(beerId).orElseThrow(NotFoundException::new);
+		beer.setBeerName(beerDto.getBeerName());
+		beer.setBeerStyle(beerDto.getBeerStyle().name());
+		beer.setPrice(beerDto.getPrice());
+		beer.setUpc(beerDto.getUpc());
+		Beer updatedBeer = beerRepository.save(beer);
+		return beerMapper.beerToBeerDto(updatedBeer);
 	}
 
 	@Override

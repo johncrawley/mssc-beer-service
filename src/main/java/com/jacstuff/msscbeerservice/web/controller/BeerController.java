@@ -22,7 +22,7 @@ import com.jacstuff.msscbeerservice.web.model.BeerDto;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor // the beer service field will automatically get wired into the generated constructor (if marked final)
 @RequestMapping("/api/v1/beer")
 @RestController
 public class BeerController {
@@ -31,25 +31,26 @@ public class BeerController {
 
 	@GetMapping("/{beerId}")
 	public ResponseEntity<BeerDto> getBeerById(@PathVariable UUID beerId){
-		return new ResponseEntity<>(BeerDto.builder().build(), HttpStatus.OK);
+		return new ResponseEntity<>(beerService.getBeerById(beerId), HttpStatus.OK);
+		
 	}
 
 	@PostMapping()
 	public ResponseEntity<BeerDto> saveNewBeer(@Valid @RequestBody BeerDto beerDto) {	
-		System.out.println("saved beer! "  + beerDto.getBeerName());
+
 		BeerDto savedDto = beerService.saveBeer(beerDto);
 		HttpHeaders headers = new HttpHeaders();
 		if(savedDto != null) {
 			headers.add("Location", "/api/v1/beer/" + savedDto.getId().toString());
 		}
-	return new ResponseEntity<>(beerDto, headers, HttpStatus.CREATED);
+	return new ResponseEntity<>(savedDto, headers, HttpStatus.CREATED);
 	}
 
 
 	@PutMapping("/{beerId}")
-	public ResponseEntity<Void> updateBeerById(@PathVariable UUID beerId, @Valid @RequestBody BeerDto beerDto) {
-		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	public ResponseEntity<BeerDto> updateBeerById(@PathVariable UUID beerId, @Valid @RequestBody BeerDto beerDto) {
+		BeerDto updatedBeer = beerService.updateBeer(beerId, beerDto);
+		return new ResponseEntity<>(updatedBeer, HttpStatus.NO_CONTENT);
 	}
 	
 	@DeleteMapping({"/{beerId}"})
