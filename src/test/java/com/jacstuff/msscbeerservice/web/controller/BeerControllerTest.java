@@ -1,5 +1,6 @@
 package com.jacstuff.msscbeerservice.web.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -14,7 +15,9 @@ import static org.springframework.restdocs.snippet.Attributes.key;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.BDDMockito.given;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jacstuff.msscbeerservice.bootstrap.BeerLoader;
 import com.jacstuff.msscbeerservice.services.BeerService;
 import com.jacstuff.msscbeerservice.web.model.BeerDto;
 import com.jacstuff.msscbeerservice.web.model.BeerStyle;
@@ -45,21 +49,16 @@ public class BeerControllerTest {
 	@Autowired MockMvc mockMvc;
 	@Autowired ObjectMapper objectMapper;
 	@MockBean BeerService beerService;
-	BeerDto validBeer;
 	
 	@BeforeEach
 	void setup() {
-		validBeer = BeerDto.builder()
-				.id(UUID.randomUUID())
-				.beerName("Goodbeer 3")
-				.beerStyle(BeerStyle.PALE_ALE)
-				.upc(12312331L)
-				.build();
+
 	}
 	
 	
 	@Test
 	void getBeerById() throws Exception{
+		given(beerService.getBeerById(any())).willReturn(getValidBeerDto());
 		mockMvc.perform(
 				get("/api/v1/beer/{beerId}", UUID.randomUUID().toString())
 				.param("iscold", "yes") // not a real param, will be ignored by controller, just showing and example of how to document path params below
@@ -74,10 +73,11 @@ public class BeerControllerTest {
 								parameterWithName("iscold").description("Is Beer Cold query parameter.")
 						),
 						responseFields(
-								fieldWithPath("id").description("Id of Beer").type(UUID.class),
+								fieldWithPath("beerId").description("Id of Beer").type(UUID.class),
 								fieldWithPath("beerName").description("The name of the Beer"),
 								fieldWithPath("beerStyle").description("What kind of Beer it is"),
 								fieldWithPath("upc").description("A upc of Beer"),
+								fieldWithPath("myLocalDate").ignored(),
 								fieldWithPath("version").description("what version of Beer"),
 								fieldWithPath("createdDate").description("The date the beer was added"),
 								fieldWithPath("modifiedDate").description("The most recent date the beer data was modified"),
@@ -89,10 +89,14 @@ public class BeerControllerTest {
 				);
 	}
 	
+	
 	@Test
 	void saveNewBeer() throws Exception {
-		BeerDto beerDto = BeerDto.builder().beerName("Genuine Class").beerStyle(BeerStyle.PORTER).build();
+
+		BeerDto beerDto = getValidBeerDto();
 		String beerDtoJson = objectMapper.writeValueAsString(beerDto);
+		
+		given(beerService.getBeerById(any())).willReturn(getValidBeerDto());
 		
 		ConstrainedFields fields = new ConstrainedFields(BeerDto.class);
 		
@@ -106,10 +110,11 @@ public class BeerControllerTest {
 							fields.withPath("price").description("Price of beer"),
 							fields.withPath("beerStyle").description("Style of beer"),
 							fields.withPath("upc").description("Beer UPC"),
-							fields.withPath("id").ignored(),
+							fields.withPath("beerId").ignored(),
 							fields.withPath("version").ignored(),
 							fields.withPath("createdDate").ignored(),
 							fields.withPath("modifiedDate").ignored(),
+							fields.withPath("myLocalDate").ignored(),
 							fields.withPath("quantityOnHand").ignored()
 					)	
 						
@@ -119,7 +124,9 @@ public class BeerControllerTest {
 	@Test
 	void updateBeerById() throws Exception {
 
-		BeerDto beerDto = validBeer;
+		given(beerService.getBeerById(any())).willReturn(getValidBeerDto());
+		
+		BeerDto beerDto = getValidBeerDto();
 		beerDto.setId(null);
 		String beerDtoJson = objectMapper.writeValueAsString(beerDto);
 		
@@ -129,6 +136,17 @@ public class BeerControllerTest {
 				.andExpect(status().isNoContent());
 	}
 
+	
+
+    private BeerDto getValidBeerDto(){
+        return BeerDto.builder()
+				.beerName("Goodbeer 3")
+				.beerStyle(BeerStyle.PALE_ALE)
+				.upc(BeerLoader.BEER_1_UPC)
+                .price(new BigDecimal("2.99"))
+                .build();
+    }
+	
 	
 	private static class ConstrainedFields {
 		

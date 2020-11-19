@@ -12,7 +12,10 @@ import com.jacstuff.msscbeerservice.repositories.BeerRepository;
 public class BeerLoader implements CommandLineRunner {
 
 	private final BeerRepository beerRepository;
-	
+
+	public static final String BEER_1_UPC = "071231231231";
+	public static final String BEER_2_UPC = "071231231232";
+	public static final String BEER_3_UPC = "071231231233";
 	
 	public BeerLoader(BeerRepository beerRepository) {
 		this.beerRepository = beerRepository;
@@ -35,7 +38,7 @@ public class BeerLoader implements CommandLineRunner {
 				.beerName("Longfield")
 				.beerStyle("IPA")
 				.quantityToBrew(200)
-				.upc(3033030301L)
+				.upc(BEER_1_UPC)
 				.price(new BigDecimal("5.99"))
 				.build());
 		
@@ -43,7 +46,7 @@ public class BeerLoader implements CommandLineRunner {
 				.beerName("Spicy Dragon")
 				.beerStyle("Ale")
 				.quantityToBrew(140)
-				.upc(40404401L)
+				.upc(BEER_2_UPC)
 				.price(new BigDecimal("3.59"))
 				.build());
 

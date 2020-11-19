@@ -40,8 +40,8 @@ public class BeerDto {
 	@NotNull
 	private BeerStyle beerStyle;
 	
-	@Positive
-	private Long upc;
+	@NotNull
+	private String upc;
 	
 	@Null
 	private Integer version;
@@ -64,6 +64,6 @@ public class BeerDto {
 	@Null
 	@JsonSerialize(using = LocalDateSerializer.class)
 	@JsonDeserialize(using = LocalDateDeserializer.class)
-	LocalDate myLocalDate;
+	private LocalDate myLocalDate;
 	
 }

@@ -11,7 +11,7 @@ public class BaseTest {
 				.beerName("GreatBeer")
 				.beerStyle(BeerStyle.LAGER)
 				.price(new BigDecimal("8.99"))
-				.upc(123123123L)
+				.upc("123123123")
 				.createdDate(OffsetDateTime.now())
 				.myLocalDate(LocalDate.now())
 				.build();
