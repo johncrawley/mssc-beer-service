@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MsscBeerServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MsscBeerServiceApplication.class, args);
+			SpringApplication.run(MsscBeerServiceApplication.class, args);
 	}
 
 }

@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import com.jacstuff.msscbeerservice.domain.Beer;
 import com.jacstuff.msscbeerservice.repositories.BeerRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Component
 public class BeerLoader implements CommandLineRunner {
 
@@ -17,14 +20,12 @@ public class BeerLoader implements CommandLineRunner {
 	public static final String BEER_2_UPC = "071231231232";
 	public static final String BEER_3_UPC = "071231231233";
 	
-	public BeerLoader(BeerRepository beerRepository) {
-		this.beerRepository = beerRepository;
-	}
 
-	
 	@Override
 	public void run(String... args) throws Exception {
-		loadBeerObjects();
+		if(beerRepository.count() == 0) {
+			loadBeerObjects();
+		}
 	}
 	
 	
